@@ -4,7 +4,7 @@ import main.GamePanel;
 import main.KeyHandler;
 
 import javax.imageio.ImageIO;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -21,8 +21,15 @@ public class Player extends Entity {
         this.gamePanel = gamePanel;
         this.keyHandler = keyHandler;
 
-        screenX = gamePanel.screenWidth / 2 - (gamePanel.tileSize / 2);
-        screenY = gamePanel.screenHeight / 2 - (gamePanel.tileSize / 2);
+        screenX = gamePanel.screenWidth / 2 - gamePanel.tileSize / 2;
+        screenY = gamePanel.screenHeight / 2 - gamePanel.tileSize / 2;
+
+        solidArea = new Rectangle();
+        solidArea.x = 24 * gamePanel.scale;
+        solidArea.y = 20 * gamePanel.scale;
+        solidArea.width = 10 * gamePanel.scale;
+        solidArea.height = 30 * gamePanel.scale;
+
 
         getPlayerImage();
         setDefaultValues();
@@ -36,7 +43,7 @@ public class Player extends Entity {
         worldY = gamePanel.tileSize * 10;
         speed = 5;
         dirNum = 0;
-        directionArr = new BufferedImage[]{down, up, right, left};
+        directionArr = new BufferedImage[]{down, up, left, right};
 
     }
 
@@ -55,23 +62,47 @@ public class Player extends Entity {
 
     public void update() {
 
+        if (keyHandler.downPressed == true ||
+            keyHandler.upPressed == true ||
+            keyHandler.rightPressed == true ||
+            keyHandler.leftPressed == true) {
 
-        if (keyHandler.downPressed == true) {
-            dirNum = 0; // DOWN
-            worldY += speed;
-        }
-        else if (keyHandler.upPressed == true) {
-            dirNum = 1; // UP
-            worldY -= speed;
-        }
 
-        if (keyHandler.rightPressed == true) {
-            dirNum = 2; // Right
-            worldX += speed;
-        }
-        else if (keyHandler.leftPressed == true) {
-            dirNum = 3; // LEFT
-            worldX -= speed;
+            if (keyHandler.downPressed == true) {
+                dirNum = 0; // DOWN
+            }
+            else if (keyHandler.upPressed == true) {
+                dirNum = 1; // UP
+            }
+
+            if (keyHandler.leftPressed == true) {
+                dirNum = 2; // LEFT
+            }
+            else if (keyHandler.rightPressed == true) {
+                dirNum = 3; // RIGHT
+            }
+
+            collisionOn = false;
+            gamePanel.collisionChecker.checkTile(this);
+
+            if (collisionOn == false) {
+
+                switch (dirNum) {
+                    case 0:
+                        worldY += speed;
+                        break;
+                    case 1:
+                        worldY -= speed;
+                        break;
+                    case 2:
+                        worldX -= speed;
+                        break;
+                    case 3:
+                        worldX += speed;
+                        break;
+                }
+
+            }
         }
 
     }
@@ -82,7 +113,6 @@ public class Player extends Entity {
         image = directionArr[dirNum];
 
         g2.drawImage(image, screenX, screenY, (int)(gamePanel.tileSize * 1.8), (int)(gamePanel.tileSize * 1.8), null);
-
     }
 
 }

@@ -21,8 +21,8 @@ public class Enemy extends Entity {
 
     private void setDefaultValues() {
 
-        worldX = gamePanel.tileSize * 3;
-        worldY = gamePanel.tileSize * 3;
+        worldX = gamePanel.tileSize * 5;
+        worldY = gamePanel.tileSize * 5;
         speed = 5;
 
     }
